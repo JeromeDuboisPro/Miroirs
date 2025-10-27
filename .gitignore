@@ -1,0 +1,56 @@
+# Godot
+.import/
+export.cfg
+export_presets.cfg
+*.translation
+*.import
+
+# Godot-specific
+.mono/
+data_*/
+mono_crash.*.json
+
+# OS
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# IDE
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+*.tmp
+*.bak
+*~
+
+# Build outputs
+builds/
+exports/
+*.pck
+*.zip
+
+# Node modules (if using any web tools)
+node_modules/
+
+# Python (if using any Python scripts)
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+env/
+venv/
+
+# Compiled files
+*.o
+*.so
+*.exe
+*.dll
