@@ -21,8 +21,12 @@ func _ready():
 	world_generator.generate_world(seed_value, dark_world, false)
 
 	print("World generation complete!")
-	print("Press Tab to switch between worlds")
-	print("Use WASD or Arrow keys to move")
+	print("Controls:")
+	print("  WASD/Arrows: Move player")
+	print("  Tab: Switch worlds")
+	print("  Mouse Wheel: Zoom camera")
+	print("  Middle Mouse: Pan camera (hold and drag)")
+	print("  Space: Recenter camera on player")
 
 func _input(event):
 	# Tab key to switch worlds

@@ -1,9 +1,10 @@
-[gd_scene load_steps=5 format=3 uid="uid://b4w7xy2mkp9vq"]
+[gd_scene load_steps=6 format=3 uid="uid://b4w7xy2mkqavq"]
 
 [ext_resource type="Script" path="res://scripts/systems/game_manager.gd" id="1_manager"]
 [ext_resource type="PackedScene" uid="uid://cxw7vv4h6gp8p" path="res://scenes/worlds/light_world.tscn" id="2_light"]
 [ext_resource type="PackedScene" uid="uid://dv5m8n3xkp2lq" path="res://scenes/worlds/dark_world.tscn" id="3_dark"]
 [ext_resource type="PackedScene" uid="uid://bw8yqv5xkn3qi" path="res://scenes/player/player.tscn" id="4_player"]
+[ext_resource type="Script" path="res://scripts/systems/camera_controller.gd" id="5_camera"]
 
 [node name="Main" type="Node2D"]
 script = ExtResource("1_manager")
@@ -11,6 +12,7 @@ script = ExtResource("1_manager")
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2(160, 90)
 zoom = Vector2(2, 2)
+script = ExtResource("5_camera")
 
 [node name="LightWorld" parent="." instance=ExtResource("2_light")]
 

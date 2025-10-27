@@ -1,7 +1,7 @@
 extends CharacterBody2D
 ## Player character with WASD/Arrow key movement
 
-const SPEED = 150.0
+const SPEED = 120.0  # 20% slower for better control
 
 func _physics_process(_delta):
 	# Get input direction (both WASD and Arrow keys)
