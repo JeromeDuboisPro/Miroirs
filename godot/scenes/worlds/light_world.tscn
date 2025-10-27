@@ -1,0 +1,11 @@
+[gd_scene format=3 uid="uid://cxw7vv4h6gp8p"]
+
+[node name="LightWorld" type="Node2D"]
+
+[node name="Background" type="ColorRect" parent="."]
+offset_right = 1024.0
+offset_bottom = 1024.0
+color = Color(0.8, 0.9, 0.7, 1)
+z_index = -1
+
+[node name="TileContainer" type="Node2D" parent="."]

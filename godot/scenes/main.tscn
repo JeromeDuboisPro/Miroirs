@@ -1,0 +1,44 @@
+[gd_scene load_steps=5 format=3 uid="uid://b4w7xy2mkp9vq"]
+
+[ext_resource type="Script" path="res://scripts/systems/game_manager.gd" id="1_manager"]
+[ext_resource type="PackedScene" uid="uid://cxw7vv4h6gp8p" path="res://scenes/worlds/light_world.tscn" id="2_light"]
+[ext_resource type="PackedScene" uid="uid://dv5m8n3xkp2lq" path="res://scenes/worlds/dark_world.tscn" id="3_dark"]
+[ext_resource type="PackedScene" uid="uid://bw8yqv5xkn3qi" path="res://scenes/player/player.tscn" id="4_player"]
+
+[node name="Main" type="Node2D"]
+script = ExtResource("1_manager")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(160, 90)
+zoom = Vector2(2, 2)
+
+[node name="LightWorld" parent="." instance=ExtResource("2_light")]
+
+[node name="DarkWorld" parent="." instance=ExtResource("3_dark")]
+visible = false
+
+[node name="Player" parent="." instance=ExtResource("4_player")]
+position = Vector2(160, 90)
+z_index = 1
+
+[node name="WorldGenerator" type="Node" parent="."]
+
+[node name="UI" type="CanvasLayer" parent="."]
+
+[node name="HUD" type="Control" parent="UI"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="WorldLabel" type="Label" parent="UI/HUD"]
+layout_mode = 0
+offset_left = 10.0
+offset_top = 10.0
+offset_right = 200.0
+offset_bottom = 40.0
+theme_override_font_sizes/font_size = 20
+text = "Light World (Nature)"
