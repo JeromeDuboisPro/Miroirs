@@ -49,8 +49,12 @@ func _input(event):
 		recenter_on_player()
 
 func _process(delta):
-	# Smooth return to player after panning
-	if returning_to_player and target_player:
+	if not target_player:
+		return
+
+	# Update camera position based on state
+	if returning_to_player:
+		# Smooth return to player after panning
 		camera_offset = camera_offset.lerp(Vector2.ZERO, RETURN_SPEED * delta)
 		position = target_player.position + camera_offset
 
@@ -59,8 +63,8 @@ func _process(delta):
 			camera_offset = Vector2.ZERO
 			returning_to_player = false
 
-	# Follow player when not panning
-	elif not is_panning and target_player:
+	else:
+		# Always update position (whether panning or following)
 		position = target_player.position + camera_offset
 
 func zoom_camera(amount: float):
