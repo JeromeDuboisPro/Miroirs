@@ -22,11 +22,13 @@ func _ready():
 
 	print("World generation complete!")
 	print("Controls:")
-	print("  WASD/Arrows: Move player")
+	print("  Arrows or ZQSD/WASD: Move player")
 	print("  Tab: Switch worlds")
 	print("  Mouse Wheel: Zoom camera")
-	print("  Middle Mouse: Pan camera (hold and drag)")
+	print("  Middle Mouse Button: Pan camera (hold and drag)")
 	print("  Space: Recenter camera on player")
+	print("")
+	print("Watch console for middle mouse debug messages!")
 
 func _input(event):
 	# Tab key to switch worlds

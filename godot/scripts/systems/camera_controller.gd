@@ -31,16 +31,18 @@ func _input(event):
 		elif event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
 			zoom_camera(-ZOOM_SPEED)
 
-		# Middle mouse button pan
+		# Middle mouse button pan (button index 3)
 		elif event.button_index == MOUSE_BUTTON_MIDDLE:
+			print("Middle mouse detected: ", event.pressed)
 			if event.pressed:
 				start_panning()
 			else:
 				stop_panning()
 
 	# Mouse motion while panning
-	if event is InputEventMouseMotion and is_panning:
-		pan_camera(event.relative)
+	if event is InputEventMouseMotion:
+		if is_panning:
+			pan_camera(event.relative)
 
 	# Space bar to recenter
 	if event.is_action_pressed("ui_select"):  # Space bar
@@ -70,10 +72,12 @@ func start_panning():
 	is_panning = true
 	returning_to_player = false
 	pan_start_position = get_global_mouse_position()
+	print("Camera panning started")
 
 func stop_panning():
 	is_panning = false
 	returning_to_player = true
+	print("Camera panning stopped, returning to player")
 
 func pan_camera(motion: Vector2):
 	# Pan camera opposite to mouse motion
