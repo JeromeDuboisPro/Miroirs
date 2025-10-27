@@ -5,9 +5,17 @@ extends Node2D
 @onready var light_world = $LightWorld/TileContainer
 @onready var dark_world = $DarkWorld/TileContainer
 @onready var world_label = $UI/HUD/WorldLabel
+@onready var inventory_label = $UI/HUD/InventoryLabel
 @onready var world_manager = self  # This script is on the Main node
 
 var current_world_type = 0  # 0 = Light, 1 = Dark
+
+# Inventory system with 999 cap per resource
+const MAX_RESOURCE = 999
+var inventory = {
+	"wood": 0,
+	"metal": 0
+}
 
 func _ready():
 	# Load world generator script
@@ -24,15 +32,18 @@ func _ready():
 	print("Controls:")
 	print("  Arrows or ZQSD/WASD: Move player")
 	print("  Tab: Switch worlds")
+	print("  E: Harvest resources (trees in Light = wood, deposits in Dark = metal)")
 	print("  Mouse Wheel: Zoom camera")
 	print("  Middle Mouse Button: Pan camera (hold and drag)")
 	print("  Space: Recenter camera on player")
 	print("")
-	print("Watch console for middle mouse debug messages!")
+
+	# Initialize inventory UI
+	update_inventory_ui()
 
 func _input(event):
 	# Tab key to switch worlds
-	if event.is_action_pressed("ui_cancel"):
+	if event.is_action_pressed("switch_world"):
 		toggle_world()
 
 func toggle_world():
@@ -48,3 +59,47 @@ func toggle_world():
 		$DarkWorld.visible = true
 		world_label.text = "Dark World (Tech)"
 		world_label.modulate = Color(0.5, 0.8, 1.0)
+
+func add_resource(resource_type: int, amount: int):
+	var resource_name = "wood" if resource_type == 0 else "metal"
+
+	# Apply 999 cap
+	inventory[resource_name] = min(inventory[resource_name] + amount, MAX_RESOURCE)
+
+	# Update UI
+	update_inventory_ui()
+
+	# Check if at cap
+	if inventory[resource_name] >= MAX_RESOURCE:
+		print(resource_name.capitalize(), " at maximum capacity (999)")
+
+func update_inventory_ui():
+	inventory_label.text = "Wood: %d | Metal: %d" % [inventory["wood"], inventory["metal"]]
+
+func transform_resource_across_worlds(harvest_position: Vector2, harvested_type: int):
+	# Cross-world transformation: harvesting in one world spawns resource in the other
+	# Wood (Light) → Metal (Dark), Metal (Dark) → Wood (Light)
+
+	var target_world: Node2D
+	var new_resource_type: int
+
+	# Determine which world to spawn in and what type
+	if harvested_type == 0:  # Harvested WOOD in Light world
+		target_world = dark_world
+		new_resource_type = 1  # Spawn METAL in Dark world
+		print("⚡ Mirror transformation: Tree → Metal deposit in Dark world")
+	else:  # Harvested METAL in Dark world
+		target_world = light_world
+		new_resource_type = 0  # Spawn WOOD in Light world
+		print("⚡ Mirror transformation: Metal → Tree in Light world")
+
+	# Load resource scene and spawn at same position in other world
+	var resource_scene = load("res://scenes/resources/resource_node.tscn")
+	var new_resource = resource_scene.instantiate()
+	new_resource.global_position = harvest_position
+	new_resource.resource_type = new_resource_type
+
+	# Add to target world
+	target_world.add_child(new_resource)
+
+	print("  Spawned at position: ", harvest_position)

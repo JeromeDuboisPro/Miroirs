@@ -4,6 +4,7 @@ extends Node
 const WORLD_WIDTH = 64
 const WORLD_HEIGHT = 64
 const TILE_SIZE = 16
+const RESOURCE_SPAWN_THRESHOLD = 0.3  # Higher noise values spawn resources
 
 # Tile type colors (placeholder visuals)
 const LIGHT_COLORS = {
@@ -20,6 +21,7 @@ const DARK_COLORS = {
 
 var world_seed: int = 0
 var noise: FastNoiseLite
+var resource_node_scene = preload("res://scenes/resources/resource_node.tscn")
 
 func generate_world(seed_value: int, world_container: Node2D, is_light: bool):
 	world_seed = seed_value
@@ -34,11 +36,17 @@ func generate_world(seed_value: int, world_container: Node2D, is_light: bool):
 	for child in world_container.get_children():
 		child.queue_free()
 
-	# Generate tiles
+	# Generate tiles and resources
 	for y in range(WORLD_HEIGHT):
 		for x in range(WORLD_WIDTH):
 			var tile = create_tile(x, y, is_light)
 			world_container.add_child(tile)
+
+			# Spawn resource nodes at appropriate locations
+			var noise_value = noise.get_noise_2d(x, y)
+			if noise_value > RESOURCE_SPAWN_THRESHOLD:
+				var resource = spawn_resource(x, y, is_light)
+				world_container.add_child(resource)
 
 func create_tile(x: int, y: int, is_light: bool) -> ColorRect:
 	var noise_value = noise.get_noise_2d(x, y)
@@ -64,3 +72,15 @@ func create_tile(x: int, y: int, is_light: bool) -> ColorRect:
 			tile.color = DARK_COLORS["structure"]
 
 	return tile
+
+func spawn_resource(x: int, y: int, is_light: bool) -> Node2D:
+	var resource = resource_node_scene.instantiate()
+	resource.position = Vector2(x * TILE_SIZE + TILE_SIZE/2, y * TILE_SIZE + TILE_SIZE/2)
+
+	# Set resource type based on world
+	if is_light:
+		resource.resource_type = 0  # WOOD
+	else:
+		resource.resource_type = 1  # METAL
+
+	return resource
