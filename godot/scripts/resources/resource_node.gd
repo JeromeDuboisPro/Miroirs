@@ -6,6 +6,7 @@ enum ResourceType { WOOD, METAL }
 @export var resource_type: ResourceType = ResourceType.WOOD
 @export var resource_amount: int = 1
 @export var regeneration_time: float = 60.0  # seconds
+@export var world_type: int = 0  # 0 = Light, 1 = Dark
 
 var is_depleted: bool = false
 var can_harvest: bool = false
@@ -33,11 +34,15 @@ func _process(delta):
 		if regeneration_timer >= regeneration_time:
 			_regenerate()
 
-	# Show interaction icon when player is nearby and not depleted
-	interaction_icon.visible = can_harvest and not is_depleted
+	# Check if we're in the correct world
+	var game_manager = get_tree().get_root().get_node("Main")
+	var is_correct_world = (game_manager.current_world_type == world_type)
 
-	# Handle harvest input
-	if can_harvest and not is_depleted and Input.is_action_just_pressed("interact"):
+	# Show interaction icon only when in correct world, player nearby, and not depleted
+	interaction_icon.visible = can_harvest and not is_depleted and is_correct_world
+
+	# Handle harvest input (only in correct world)
+	if can_harvest and not is_depleted and is_correct_world and Input.is_action_just_pressed("interact"):
 		_harvest()
 
 func _on_body_entered(body):

@@ -99,15 +99,18 @@ func transform_resource_across_worlds(harvest_position: Vector2, harvested_type:
 
 	var target_world: Node2D
 	var new_resource_type: int
+	var new_world_type: int
 
 	# Determine which world to spawn in and what type
 	if harvested_type == 0:  # Harvested WOOD in Light world
 		target_world = dark_world
 		new_resource_type = 1  # Spawn METAL in Dark world
+		new_world_type = 1  # DARK WORLD
 		print("⚡ Mirror transformation: Tree → Metal deposit in Dark world")
 	else:  # Harvested METAL in Dark world
 		target_world = light_world
 		new_resource_type = 0  # Spawn WOOD in Light world
+		new_world_type = 0  # LIGHT WORLD
 		print("⚡ Mirror transformation: Metal → Tree in Light world")
 
 	# Load resource scene and spawn at same position in other world
@@ -115,6 +118,7 @@ func transform_resource_across_worlds(harvest_position: Vector2, harvested_type:
 	var new_resource = resource_scene.instantiate()
 	new_resource.global_position = harvest_position
 	new_resource.resource_type = new_resource_type
+	new_resource.world_type = new_world_type  # CRITICAL: Set correct world type!
 
 	# Add to target world
 	target_world.add_child(new_resource)

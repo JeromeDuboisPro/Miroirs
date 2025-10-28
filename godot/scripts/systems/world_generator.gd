@@ -89,11 +89,13 @@ func spawn_resource(x: int, y: int, is_light: bool) -> Node2D:
 	var resource = resource_node_scene.instantiate()
 	resource.position = Vector2(x * TILE_SIZE + TILE_SIZE/2, y * TILE_SIZE + TILE_SIZE/2)
 
-	# Set resource type based on world
+	# Set resource type and world type
 	if is_light:
 		resource.resource_type = 0  # WOOD
+		resource.world_type = 0  # LIGHT WORLD
 	else:
 		resource.resource_type = 1  # METAL
+		resource.world_type = 1  # DARK WORLD
 
 	return resource
 
@@ -101,5 +103,8 @@ func spawn_enemy(x: int, y: int, is_light: bool) -> Node2D:
 	var enemy_scene = enemy_light_scene if is_light else enemy_dark_scene
 	var enemy = enemy_scene.instantiate()
 	enemy.position = Vector2(x * TILE_SIZE + TILE_SIZE/2, y * TILE_SIZE + TILE_SIZE/2)
+
+	# Set world type
+	enemy.world_type = 0 if is_light else 1
 
 	return enemy

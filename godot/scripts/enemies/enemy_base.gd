@@ -8,6 +8,7 @@ enum EnemyState { IDLE, PATROL, COMBAT, DEAD }
 @export var patrol_radius: float = 64.0
 @export var detection_radius: float = 80.0
 @export var max_health: int = 60
+@export var world_type: int = 0  # 0 = Light, 1 = Dark
 
 @onready var health_component = $HealthComponent
 @onready var sprite = $Sprite
@@ -39,8 +40,12 @@ func _physics_process(delta):
 	if current_state == EnemyState.DEAD:
 		return
 
-	# Check player proximity for combat
-	if player and player.health_component.is_alive():
+	# Check if we're in the correct world
+	var game_manager = get_tree().get_root().get_node("Main")
+	var is_correct_world = (game_manager.current_world_type == world_type)
+
+	# Only detect player if in correct world
+	if is_correct_world and player and player.health_component.is_alive():
 		var distance_to_player = global_position.distance_to(player.global_position)
 
 		if distance_to_player <= detection_radius:
@@ -49,6 +54,10 @@ func _physics_process(delta):
 		else:
 			if current_state == EnemyState.COMBAT:
 				_exit_combat_state()
+	else:
+		# Exit combat if switched worlds
+		if current_state == EnemyState.COMBAT:
+			_exit_combat_state()
 
 	# State-based behavior
 	match current_state:

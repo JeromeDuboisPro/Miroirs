@@ -13,6 +13,7 @@ patrol_speed = 40.0
 patrol_radius = 64.0
 detection_radius = 80.0
 max_health = 60
+world_type = 0
 
 [node name="Sprite" type="ColorRect" parent="."]
 offset_left = -6.0
