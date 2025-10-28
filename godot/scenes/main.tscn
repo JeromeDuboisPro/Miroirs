@@ -53,3 +53,22 @@ offset_right = 200.0
 offset_bottom = 55.0
 theme_override_font_sizes/font_size = 14
 text = "Wood: 0 | Metal: 0"
+
+[node name="HealthBar" type="ProgressBar" parent="UI/HUD"]
+layout_mode = 0
+offset_left = 10.0
+offset_top = 60.0
+offset_right = 160.0
+offset_bottom = 75.0
+max_value = 100.0
+value = 100.0
+show_percentage = false
+
+[node name="HealthLabel" type="Label" parent="UI/HUD"]
+layout_mode = 0
+offset_left = 12.0
+offset_top = 61.0
+offset_right = 100.0
+offset_bottom = 74.0
+theme_override_font_sizes/font_size = 10
+text = "HP: 100/100"

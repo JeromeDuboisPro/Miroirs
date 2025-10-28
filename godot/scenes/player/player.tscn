@@ -1,6 +1,7 @@
-[gd_scene load_steps=3 format=3 uid="uid://bw8yqv5xkn3qi"]
+[gd_scene load_steps=4 format=3 uid="uid://bw8yqv5xkn3qi"]
 
 [ext_resource type="Script" path="res://scripts/player/player.gd" id="1_player"]
+[ext_resource type="Script" path="res://scripts/combat/health_component.gd" id="2_health"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_1"]
 size = Vector2(12, 12)
@@ -17,3 +18,8 @@ color = Color(0.2, 0.6, 1, 1)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("RectangleShape2D_1")
+
+[node name="HealthComponent" type="Node" parent="."]
+script = ExtResource("2_health")
+max_health = 100
+invulnerability_duration = 1.0

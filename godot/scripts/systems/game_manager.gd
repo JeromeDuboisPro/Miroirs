@@ -6,6 +6,9 @@ extends Node2D
 @onready var dark_world = $DarkWorld/TileContainer
 @onready var world_label = $UI/HUD/WorldLabel
 @onready var inventory_label = $UI/HUD/InventoryLabel
+@onready var health_bar = $UI/HUD/HealthBar
+@onready var health_label = $UI/HUD/HealthLabel
+@onready var player = $Player
 @onready var world_manager = self  # This script is on the Main node
 
 var current_world_type = 0  # 0 = Light, 1 = Dark
@@ -36,10 +39,17 @@ func _ready():
 	print("  Mouse Wheel: Zoom camera")
 	print("  Middle Mouse Button: Pan camera (hold and drag)")
 	print("  Space: Recenter camera on player")
+	print("  T: [DEBUG] Take 20 damage (test health system)")
 	print("")
+	print("Phase 1 Complete: Health system active!")
 
 	# Initialize inventory UI
 	update_inventory_ui()
+
+	# Connect player health signals
+	if player and player.health_component:
+		player.health_component.health_changed.connect(_on_player_health_changed)
+		update_health_ui()
 
 func _input(event):
 	# Tab key to switch worlds
@@ -103,3 +113,26 @@ func transform_resource_across_worlds(harvest_position: Vector2, harvested_type:
 	target_world.add_child(new_resource)
 
 	print("  Spawned at position: ", harvest_position)
+
+func _on_player_health_changed(old_value: int, new_value: int):
+	update_health_ui()
+
+func update_health_ui():
+	if not player or not player.health_component:
+		return
+
+	var current_hp = player.health_component.current_health
+	var max_hp = player.health_component.max_health
+
+	health_bar.value = current_hp
+	health_bar.max_value = max_hp
+	health_label.text = "HP: %d/%d" % [current_hp, max_hp]
+
+	# Color health bar based on health percentage
+	var health_percent = float(current_hp) / float(max_hp)
+	if health_percent > 0.6:
+		health_bar.modulate = Color(0.2, 0.8, 0.2)  # Green
+	elif health_percent > 0.3:
+		health_bar.modulate = Color(0.9, 0.7, 0.2)  # Yellow
+	else:
+		health_bar.modulate = Color(0.9, 0.2, 0.2)  # Red
