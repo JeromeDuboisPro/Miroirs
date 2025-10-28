@@ -49,6 +49,7 @@ func _ready():
 	# Connect player health signals
 	if player and player.health_component:
 		player.health_component.health_changed.connect(_on_player_health_changed)
+		player.health_component.respawned.connect(_on_player_respawned)
 		update_health_ui()
 
 func _input(event):
@@ -116,6 +117,10 @@ func transform_resource_across_worlds(harvest_position: Vector2, harvested_type:
 
 func _on_player_health_changed(old_value: int, new_value: int):
 	update_health_ui()
+
+func _on_player_respawned():
+	update_health_ui()
+	print("Player respawned - HP restored to full!")
 
 func update_health_ui():
 	if not player or not player.health_component:
