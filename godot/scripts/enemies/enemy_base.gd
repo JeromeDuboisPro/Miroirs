@@ -3,6 +3,9 @@ extends CharacterBody2D
 
 enum EnemyState { IDLE, PATROL, COMBAT, DEAD }
 
+const WORLD_SIZE = Vector2(1024, 1024)  # 64x64 tiles * 16px
+const WORLD_MARGIN = 6.0  # Half of enemy size
+
 @export var enemy_type: String = "basic"
 @export var patrol_speed: float = 40.0
 @export var patrol_radius: float = 64.0
@@ -21,6 +24,10 @@ var patrol_timer: float = 0.0
 var patrol_wait_time: float = 2.0  # Wait 2s at each patrol point
 
 func _ready():
+	# Clamp spawn position to world boundaries
+	global_position.x = clamp(global_position.x, WORLD_MARGIN, WORLD_SIZE.x - WORLD_MARGIN)
+	global_position.y = clamp(global_position.y, WORLD_MARGIN, WORLD_SIZE.y - WORLD_MARGIN)
+
 	spawn_position = global_position
 	patrol_target = spawn_position
 
@@ -74,6 +81,10 @@ func _patrol_behavior(delta):
 	if distance > 5.0:
 		velocity = direction * patrol_speed
 		move_and_slide()
+
+		# Clamp position to world boundaries
+		global_position.x = clamp(global_position.x, WORLD_MARGIN, WORLD_SIZE.x - WORLD_MARGIN)
+		global_position.y = clamp(global_position.y, WORLD_MARGIN, WORLD_SIZE.y - WORLD_MARGIN)
 	else:
 		# Reached patrol point, wait before choosing new target
 		velocity = Vector2.ZERO
@@ -88,6 +99,10 @@ func _choose_new_patrol_target():
 	var angle = randf() * TAU
 	var distance = randf() * patrol_radius
 	patrol_target = spawn_position + Vector2(cos(angle), sin(angle)) * distance
+
+	# Clamp patrol target to world boundaries
+	patrol_target.x = clamp(patrol_target.x, WORLD_MARGIN, WORLD_SIZE.x - WORLD_MARGIN)
+	patrol_target.y = clamp(patrol_target.y, WORLD_MARGIN, WORLD_SIZE.y - WORLD_MARGIN)
 
 func _combat_behavior(_delta):
 	# Stop moving during combat (Phase 3 will add combat actions)

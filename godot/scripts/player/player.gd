@@ -2,6 +2,8 @@ extends CharacterBody2D
 ## Player character with WASD/Arrow key movement and health system
 
 const SPEED = 120.0  # 20% slower for better control
+const WORLD_SIZE = Vector2(1024, 1024)  # 64x64 tiles * 16px
+const WORLD_MARGIN = 6.0  # Half of player size to keep fully inside
 
 @onready var health_component = $HealthComponent
 
@@ -42,6 +44,10 @@ func _physics_process(_delta):
 	# Apply movement
 	velocity = direction * SPEED
 	move_and_slide()
+
+	# Clamp position to world boundaries
+	global_position.x = clamp(global_position.x, WORLD_MARGIN, WORLD_SIZE.x - WORLD_MARGIN)
+	global_position.y = clamp(global_position.y, WORLD_MARGIN, WORLD_SIZE.y - WORLD_MARGIN)
 
 func take_damage(amount: int):
 	health_component.take_damage(amount)
