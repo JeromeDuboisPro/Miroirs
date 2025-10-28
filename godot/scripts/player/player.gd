@@ -71,6 +71,7 @@ func _on_health_changed(old_value: int, new_value: int):
 
 # DEBUG: Test damage system (press T to take 20 damage)
 func _input(event):
-	if event.is_action_pressed("ui_text_completion_replace"):  # T key
-		take_damage(20)
-		print("DEBUG: Took 20 damage")
+	if event is InputEventKey and event.pressed and not event.echo:
+		if event.physical_keycode == 84:  # T key (physical keycode)
+			take_damage(20)
+			print("DEBUG: Took 20 damage")
