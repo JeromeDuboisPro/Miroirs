@@ -5,6 +5,8 @@ const WORLD_WIDTH = 64
 const WORLD_HEIGHT = 64
 const TILE_SIZE = 16
 const RESOURCE_SPAWN_THRESHOLD = 0.3  # Higher noise values spawn resources
+const ENEMY_SPAWN_THRESHOLD = 0.5  # Even higher values spawn enemies
+const MAX_ENEMIES_PER_WORLD = 8  # Limit enemy count
 
 # Tile type colors (placeholder visuals)
 const LIGHT_COLORS = {
@@ -22,6 +24,8 @@ const DARK_COLORS = {
 var world_seed: int = 0
 var noise: FastNoiseLite
 var resource_node_scene = preload("res://scenes/resources/resource_node.tscn")
+var enemy_light_scene = preload("res://scenes/enemies/enemy_light.tscn")
+var enemy_dark_scene = preload("res://scenes/enemies/enemy_dark.tscn")
 
 func generate_world(seed_value: int, world_container: Node2D, is_light: bool):
 	world_seed = seed_value
@@ -37,16 +41,24 @@ func generate_world(seed_value: int, world_container: Node2D, is_light: bool):
 		child.queue_free()
 
 	# Generate tiles and resources
+	var enemy_count = 0
 	for y in range(WORLD_HEIGHT):
 		for x in range(WORLD_WIDTH):
 			var tile = create_tile(x, y, is_light)
 			world_container.add_child(tile)
 
-			# Spawn resource nodes at appropriate locations
 			var noise_value = noise.get_noise_2d(x, y)
-			if noise_value > RESOURCE_SPAWN_THRESHOLD:
+
+			# Spawn resource nodes at appropriate locations
+			if noise_value > RESOURCE_SPAWN_THRESHOLD and noise_value < ENEMY_SPAWN_THRESHOLD:
 				var resource = spawn_resource(x, y, is_light)
 				world_container.add_child(resource)
+
+			# Spawn enemies at even higher noise values (but limit total count)
+			if noise_value > ENEMY_SPAWN_THRESHOLD and enemy_count < MAX_ENEMIES_PER_WORLD:
+				var enemy = spawn_enemy(x, y, is_light)
+				world_container.add_child(enemy)
+				enemy_count += 1
 
 func create_tile(x: int, y: int, is_light: bool) -> ColorRect:
 	var noise_value = noise.get_noise_2d(x, y)
@@ -84,3 +96,10 @@ func spawn_resource(x: int, y: int, is_light: bool) -> Node2D:
 		resource.resource_type = 1  # METAL
 
 	return resource
+
+func spawn_enemy(x: int, y: int, is_light: bool) -> Node2D:
+	var enemy_scene = enemy_light_scene if is_light else enemy_dark_scene
+	var enemy = enemy_scene.instantiate()
+	enemy.position = Vector2(x * TILE_SIZE + TILE_SIZE/2, y * TILE_SIZE + TILE_SIZE/2)
+
+	return enemy

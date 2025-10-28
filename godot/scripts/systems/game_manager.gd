@@ -40,8 +40,9 @@ func _ready():
 	print("  Middle Mouse Button: Pan camera (hold and drag)")
 	print("  Space: Recenter camera on player")
 	print("  T: [DEBUG] Take 20 damage (test health system)")
+	print("  Y: [DEBUG] Damage nearest enemy by 20 HP")
 	print("")
-	print("Phase 1 Complete: Health system active!")
+	print("Phase 1-2 Complete: Health system + Enemy AI active!")
 
 	# Initialize inventory UI
 	update_inventory_ui()
@@ -56,6 +57,11 @@ func _input(event):
 	# Tab key to switch worlds
 	if event.is_action_pressed("switch_world"):
 		toggle_world()
+
+	# DEBUG: Damage nearest enemy with Y key
+	if event is InputEventKey and event.pressed and not event.echo:
+		if event.physical_keycode == 89:  # Y key
+			_debug_damage_nearest_enemy()
 
 func toggle_world():
 	current_world_type = 1 - current_world_type
@@ -141,3 +147,22 @@ func update_health_ui():
 		health_bar.modulate = Color(0.9, 0.7, 0.2)  # Yellow
 	else:
 		health_bar.modulate = Color(0.9, 0.2, 0.2)  # Red
+
+func _debug_damage_nearest_enemy():
+	# Find nearest enemy in current world
+	var current_world = light_world if current_world_type == 0 else dark_world
+	var nearest_enemy: Node2D = null
+	var nearest_distance = INF
+
+	for child in current_world.get_children():
+		if child.name.begins_with("Enemy"):
+			var distance = player.global_position.distance_to(child.global_position)
+			if distance < nearest_distance:
+				nearest_distance = distance
+				nearest_enemy = child
+
+	if nearest_enemy:
+		nearest_enemy.take_damage(20)
+		print("DEBUG: Damaged ", nearest_enemy.enemy_type, " enemy for 20 HP (", nearest_enemy.health_component.current_health, " HP remaining)")
+	else:
+		print("DEBUG: No enemies found in current world")
